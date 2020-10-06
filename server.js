@@ -3,10 +3,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const db = require("./db/connection");
-const userRouter = require("./routes/user-router");
-
-const app = express();
-const apiPort = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
@@ -23,3 +19,5 @@ app.use("/api", userRouter);
 app.listen(process.env.PORT || apiPort, () =>
   console.log(`Server running on port ${apiPort}`)
 );
+
+// check port
