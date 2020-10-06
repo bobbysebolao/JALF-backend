@@ -16,6 +16,12 @@
     "mongoose": "^5.10.7"
   },
   "devDependencies": {
+    "cz-jira-smart-commit": "^3.0.0",
     "nodemon": "^2.0.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-jira-smart-commit"
+    }
   }
 }
