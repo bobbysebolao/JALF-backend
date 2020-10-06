@@ -10,7 +10,7 @@ const User = new Schema(
         // BGL_reading: [ { BGL: Number, time: Date }]
 
     },
-    { timestamps: true },
+    { timestamps: true }, 
 )
 
 module.exports = mongoose.model('users', User)
