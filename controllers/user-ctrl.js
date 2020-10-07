@@ -1,4 +1,10 @@
-const User = require('../models/user-model')
+const User = require('../models/user-model');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+dotenv.config();
+const SECRET = process.env.JWT_SECRET;
 
 createUser = (req, res) => {
     const body = req.body;
@@ -103,6 +109,16 @@ getUserById = async (req, res) => {
     }).catch(err => console.log(err))
 }
 
+loginUser = async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const user = await User.findOne({ email: email });
+    if (user && bcrypt.compare(password, user.password)) {
+        const token = jwt.sign({ user: user.email }, SECRET, { expiresIn: "1h" });
+        return res.status(200).json({ success: true, token: token })
+    }
+}
+
 // getUsers = async (req, res) => {
 //     await User.find({}, (err, users) => {
 //         if (err) {
@@ -118,6 +134,7 @@ getUserById = async (req, res) => {
 // }
 
 module.exports = {
+    loginUser,
     createUser,
     updateUser,
     deleteUser,
