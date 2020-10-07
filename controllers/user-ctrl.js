@@ -8,35 +8,51 @@ const SECRET = process.env.JWT_SECRET;
 
 createUser = (req, res) => {
     const body = req.body;
-
+    // throw an error if there is no body 
     if (!body) {
         return res.status(400).json({
             success: false,
             error: 'You must provide a user',
         })
-    }
+    };
 
-    const user = new User(body)
+    //hash the password
+   bcrypt
+    .genSalt(10)
+    .then(salt => bcrypt.hash(body.password, salt))
+    // change the body password to the hash and use it to create a user
+    .then(hash => {
+        body.password = hash;
+        const user = new User(body)
+        // throw an error if unable to create a user (user-model doesn't exist)
+        if (!user) {
+            return res.status(400).json({ success: false, error: err })
+        }
 
-    if (!user) {
-        return res.status(400).json({ success: false, error: err })
-    }
-
-    user
-        .save()
-        .then(() => {
-            return res.status(201).json({
-                success: true,
-                id: user._id,
-                message: 'User created!',
+        // new user successfully created, save it to the database
+        user
+            .save()
+            .then(() => {
+                const token = jwt.sign({ user: user.name }, SECRET, { expiresIn: "1h" });
+                return res.status(201).json({
+                    success: true,
+                    token: token,
+                    message: 'User created!',
+                })
             })
-        })
-        .catch(error => {
-            return res.status(400).json({
-                error,
-                message: 'User not created!',
+            .catch(error => {
+                return res.status(400).json({
+                    error,
+                    message: 'User not created!',
+                })
             })
-        })
+    })
+    .catch(error => {
+        return res.status(400).json({
+            error,
+            message: 'User not created!',
+        })   
+    })
 }
 
 updateUser = async (req, res) => {
