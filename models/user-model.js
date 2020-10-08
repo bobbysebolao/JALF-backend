@@ -5,6 +5,8 @@ const User = new Schema(
      {
         email: { type: String, required: true },
         password: {type: String, required: true},
+        insulinRatio: { type: Number, required: true},
+        carbRatio: { type: Number, required: true},
         glucose_reading: { type: Array },
         time: { type : Array }
     },
