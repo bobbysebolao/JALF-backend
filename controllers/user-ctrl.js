@@ -7,6 +7,7 @@ dotenv.config();
 const SECRET = process.env.JWT_SECRET;
 
 createUser = async (req, res) => {
+  console.log("FIRED AHAHAH")
   const body = req.body;
   // throw an error if there is no body
   if (!body) {
@@ -24,7 +25,7 @@ createUser = async (req, res) => {
   }
 
   //hash the password
-  bcrypt
+  return bcrypt
     .genSalt(10)
     .then((salt) => bcrypt.hash(body.password, salt))
     // change the body password to the hash and use it to create a user
@@ -37,18 +38,15 @@ createUser = async (req, res) => {
       }
 
       // new user successfully created, save it to the database
-      user
+      return user
         .save()
         .then( user => {
           console.log(user)
           const token = jwt.sign({ user: user._id}, SECRET, {
             expiresIn: "1h",
           });
-          return res.status(201).json({
-            success: true,
-            token: token,
-            message: "User created!",
-          });
+          console.log("token: " , token)
+          return res.status(200).json({ token })
         })
         .catch((error) => {
           return res.status(400).json({
