@@ -38,6 +38,7 @@ createUser = (req, res) => {
           });
           return res.status(201).json({
             success: true,
+            id: user._id,
             token: token,
             message: "User created!",
           });
@@ -75,9 +76,9 @@ updateUser = async (req, res) => {
       });
     }
     user.name = body.name;
-    user.time = body.time;
     user.email = body.email;
-    user.glucose_reading.push(body.glucose_reading);
+    user.glucose_reading.push(...body.glucose_reading);
+    user.time.push(...body.time);
     user
       .save()
       .then(() => {
@@ -132,7 +133,7 @@ loginUser = async (req, res) => {
   }
   if (user && bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ user: user.email }, SECRET, { expiresIn: "1h" });
-    return res.status(200).json({ success: true, token: token });
+    return res.status(200).json({ success: true, id: user._id, token: token });
   } else {
     return res.status(401).json({ success: false, error: err });
   }
