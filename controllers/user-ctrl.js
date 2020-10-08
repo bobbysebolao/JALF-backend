@@ -122,7 +122,7 @@ loginUser = async (req, res) => {
   }
   if (user && bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ user: user.user._id }, SECRET, { expiresIn: "1h" });
-    return res.status(200).json({ success: true, id: user._id, token: token });
+    return res.status(200).json({ success: true, token: token });
   } else {
     return res.status(401).json({ success: false, error: err });
   }
@@ -146,7 +146,6 @@ module.exports = {
   loginUser,
   createUser,
   updateUser,
-  deleteUser,
   // getUsers,
   getUserById,
 };
