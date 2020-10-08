@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const SECRET = process.env.JWT_SECRET;
 
-createUser = (req, res) => {
+createUser = async (req, res) => {
   const body = req.body;
   // throw an error if there is no body
   if (!body) {
@@ -15,6 +15,10 @@ createUser = (req, res) => {
       error: "You must provide a user",
     });
   }
+
+  if (await User.findOne({ email: req.body.email })) {
+    throw 'Account with email' + req.body.email + '" is already taken';
+    }
 
   //hash the password
   bcrypt
@@ -32,13 +36,13 @@ createUser = (req, res) => {
       // new user successfully created, save it to the database
       user
         .save()
-        .then(() => {
-          const token = jwt.sign({ user: user.name }, SECRET, {
+        .then( user => {
+          console.log(user)
+          const token = jwt.sign({ user: user._id}, SECRET, {
             expiresIn: "1h",
           });
           return res.status(201).json({
             success: true,
-            id: user._id,
             token: token,
             message: "User created!",
           });
@@ -68,14 +72,13 @@ updateUser = async (req, res) => {
     });
   }
 
-  User.findOne({ _id: req.params.id }, (err, user) => {
+  User.findOne({ _id: req.user }, (err, user) => {
     if (err) {
       return res.status(404).json({
         err,
         message: "User not found!",
       });
     }
-    user.name = body.name;
     user.email = body.email;
     user.glucose_reading.push(...body.glucose_reading);
     user.time.push(...body.time);
@@ -97,22 +100,8 @@ updateUser = async (req, res) => {
   });
 };
 
-deleteUser = async (req, res) => {
-  await User.findOneAndDelete({ _id: req.params.id }, (err, user) => {
-    if (err) {
-      return res.status(400).json({ success: false, error: err });
-    }
-
-    if (!user) {
-      return res.status(404).json({ success: false, error: `User not found` });
-    }
-
-    return res.status(200).json({ success: true, data: user });
-  }).catch((err) => console.log(err));
-};
-
 getUserById = async (req, res) => {
-  await User.findOne({ _id: req.params.id }, (err, user) => {
+  await User.findOne({ _id: req.user }, (err, user) => {
     if (err) {
       return res.status(400).json({ success: false, error: err });
     }
@@ -132,7 +121,7 @@ loginUser = async (req, res) => {
     return res.status(401).json({ success: false, error: err });
   }
   if (user && bcrypt.compare(password, user.password)) {
-    const token = jwt.sign({ user: user.email }, SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ user: user.user._id }, SECRET, { expiresIn: "1h" });
     return res.status(200).json({ success: true, id: user._id, token: token });
   } else {
     return res.status(401).json({ success: false, error: err });
