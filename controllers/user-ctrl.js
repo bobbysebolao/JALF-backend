@@ -80,7 +80,6 @@ updateUser = async (req, res) => {
         message: "User not found!",
       });
     }
-    user.email = body.email;
     user.glucose_reading.push(...body.glucose_reading);
     user.time.push(...body.time);
     user
