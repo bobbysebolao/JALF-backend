@@ -16,9 +16,12 @@ createUser = async (req, res) => {
     });
   }
 
-  if (await User.findOne({ email: req.body.email })) {
-    throw 'Account with email' + req.body.email + '" is already taken';
-    }
+  let user = await User.findOne({ email: req.body.email });
+  if (user) {
+    return res.status(400).json({
+      message: 'Account with email' + req.body.email + '" is already taken',
+    });
+  }
 
   //hash the password
   bcrypt
