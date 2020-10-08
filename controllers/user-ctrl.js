@@ -33,7 +33,7 @@ createUser = (req, res) => {
       user
         .save()
         .then(() => {
-          const token = jwt.sign({ user: user.email }, SECRET, {
+          const token = jwt.sign({ user: user.name }, SECRET, {
             expiresIn: "1h",
           });
           return res.status(201).json({
@@ -127,9 +127,14 @@ loginUser = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user = await User.findOne({ email: email });
+  if (!user) {
+    return res.status(401).json({ success: false, error: err });
+  }
   if (user && bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ user: user.email }, SECRET, { expiresIn: "1h" });
     return res.status(200).json({ success: true, token: token });
+  } else {
+    return res.status(401).json({ success: false, error: err });
   }
 };
 
