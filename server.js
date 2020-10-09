@@ -8,9 +8,9 @@ const db = require("./db/connection");
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.use(bodyParser.json());
 
-app.use(cors());
 // app.options('/api/*', cors());
 
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
