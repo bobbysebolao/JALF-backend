@@ -8,18 +8,18 @@ const db = require("./db/connection");
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({credentials: true, origin: true}));
 app.use(bodyParser.json());
 
-var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+// var allowCrossDomain = function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-  next();
-}
+//   next();
+// }
 
-app.use(allowCrossDomain)
+// app.use(allowCrossDomain)
 
 // app.use((req, res, next) => {
 //   res.header('Access-Control-Allow-Origin', '*')
