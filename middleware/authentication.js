@@ -17,30 +17,9 @@ function authenticate(req, res, next) {
 		//runs so we dont need an if statement??
 
         const token = authHeader.replace('Bearer ', '');
-        console.log("token:  ", token)
         const tokenData = jwt.verify(token, SECRET);
-        console.log("tokenData: ", tokenData);
         req.user = tokenData.user;
         next()
-        
-        // User.findOne({ _id: tokenData.user }, (err, user) => {
-        //     if (err) {
-        //       return res.status(404).json({
-        //         err,
-        //         message: "User not found!",
-        //       });
-        //     
-            
-        //}
-        
-	// 	users
-	// 		.getUserByID(tokenData.user_id) //fixed already
-	// 		.then(user => {
-	// 			console.log(user)
-	// 			req.user = user;
-	// 			next();
-	// 		})
-	// 		.catch(next);
 	} catch (_) {
 		// replaced underscore with error
 		// TO-DO: check error is unauth; if not return different error!
