@@ -5,6 +5,8 @@ const authenticate = require('../middleware/authentication')
 
 const router = express.Router()
 
+
+
 router.post('/login', UserCtrl.loginUser)
 router.post('/signup', UserCtrl.createUser)
 router.put('/store-data', authenticate, UserCtrl.updateUser)
